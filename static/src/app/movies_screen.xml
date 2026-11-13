@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="cinema_pos_screen.MoviesScreen">
+        <div class="cinema-screen screen h-100 d-flex flex-column bg-100">
+            <div class="d-flex align-items-center gap-2 p-2 border-bottom bg-view">
+                <button class="btn btn-secondary btn-lg" t-on-click="goBack">
+                    <i class="fa fa-arrow-left me-1"/>Back to order
+                </button>
+                <h4 class="m-0 me-3" t-if="state.data"><t t-esc="state.data.cinema.name"/></h4>
+                <div class="d-flex gap-1 overflow-auto flex-grow-1">
+                    <t t-foreach="state.dates" t-as="d" t-key="d">
+                        <button t-attf-class="btn btn-lg text-nowrap {{ d === state.date ? 'btn-primary' : 'btn-light' }}"
+                                t-on-click="() => this.selectDate(d)">
+                            <t t-esc="dateLabel(d)"/>
+                        </button>
+                    </t>
+                </div>
+            </div>
+
+            <div t-if="state.loading" class="p-5 text-center text-muted">
+                <i class="fa fa-circle-o-notch fa-spin fa-2x"/>
+            </div>
+
+            <div t-elif="state.data" class="d-flex flex-grow-1 overflow-hidden">
+                <!-- Movies -->
+                <div class="cinema-col cinema-movies overflow-auto p-2 border-end">
+                    <div t-if="!state.data.movies.length" class="text-muted p-3">
+                        No showtimes on sale for this day.
+                    </div>
+                    <t t-foreach="state.data.movies" t-as="movie" t-key="movie.id">
+                        <div t-attf-class="cinema-movie-card d-flex gap-2 p-2 mb-2 rounded border {{ state.movie and state.movie.id === movie.id ? 'cinema-active' : '' }}"
+                             t-on-click="() => this.selectMovie(movie)">
+                            <img t-if="movie.has_poster" class="cinema-poster rounded" t-att-src="posterUrl(movie)" alt=""/>
+                            <div t-else="" class="cinema-poster rounded bg-300 d-flex align-items-center justify-content-center">
+                                <i class="fa fa-film fa-2x text-muted"/>
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="fw-bold"><t t-esc="movie.title"/></div>
+                                <div class="small text-muted">
+                                    <t t-esc="movie.duration_minutes"/> min
+                                    <t t-if="movie.rating"> · <t t-esc="movie.rating"/></t>
+                                </div>
+                                <div class="small"><t t-esc="movie.showtimes.length"/> showtimes</div>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+
+                <!-- Showtimes + seat map -->
+                <div class="cinema-col cinema-center flex-grow-1 overflow-auto p-3">
+                    <div t-if="!state.movie" class="text-muted text-center mt-5">
+                        <i class="fa fa-film fa-3x d-block mb-3"/>Pick a movie
+                    </div>
+                    <t t-else="">
+                        <h5 t-esc="state.movie.title"/>
+                        <div class="d-flex flex-wrap gap-2 mb-3">
+                            <t t-foreach="state.movie.showtimes" t-as="st" t-key="st.id">
+                                <button t-attf-class="btn cinema-showtime availability-{{ st.availability }} {{ state.showtime and state.showtime.id === st.id ? 'cinema-active' : '' }}"
+                                        t-att-disabled="st.availability === 'sold_out'"
+                                        t-on-click="() => this.selectShowtime(st)">
+                                    <div class="fw-bold fs-5"><t t-esc="st.time"/></div>
+                                    <div class="small">
+                                        <t t-esc="st.hall"/> · <t t-esc="st.format"/>
+                                    </div>
+                                    <div class="small">
+                                        <t t-if="st.availability === 'sold_out'">Sold out</t>
+                                        <t t-else=""><t t-esc="st.available_count"/> seats left</t>
+                                    </div>
+                                </button>
+                            </t>
+                        </div>
+
+                        <t t-if="state.showtime">
+                            <div t-if="!state.seatmap" class="text-center text-muted p-4">
+                                <i class="fa fa-circle-o-notch fa-spin"/>
+                            </div>
+                            <t t-else="">
+                                <div class="cinema-legend d-flex gap-3 justify-content-center mb-2 small">
+                                    <span><i class="cinema-dot seat-free"/> Free</span>
+                                    <span><i class="cinema-dot seat-selected"/> Selected</span>
+                                    <span><i class="cinema-dot seat-held"/> On hold</span>
+                                    <span><i class="cinema-dot seat-sold"/> Sold</span>
+                                </div>
+                                <div class="cinema-screen-bar mb-3">SCREEN</div>
+                                <div class="cinema-seatmap">
+                                    <t t-foreach="seatRows" t-as="row" t-key="row.label">
+                                        <div class="cinema-seat-row">
+                                            <span class="cinema-row-label"><t t-esc="row.label"/></span>
+                                            <t t-foreach="row.seats" t-as="seat" t-key="seat.id">
+                                                <button t-attf-class="cinema-seat seat-{{ seat.status }} type-{{ seat.type }} {{ isSelected(seat) ? 'seat-selected' : '' }} {{ seat.gap ? 'seat-gap' : '' }}"
+                                                        t-att-disabled="seat.status !== 'free'"
+                                                        t-att-title="seat.label"
+                                                        t-on-click="() => this.toggleSeat(seat)">
+                                                    <t t-esc="seat.number"/>
+                                                </button>
+                                            </t>
+                                        </div>
+                                    </t>
+                                </div>
+                            </t>
+                        </t>
+                    </t>
+                </div>
+
+                <!-- Selection -->
+                <div class="cinema-col cinema-summary d-flex flex-column border-start bg-view">
+                    <div class="p-3 border-bottom fw-bold">Tickets</div>
+                    <div class="flex-grow-1 overflow-auto p-2">
+                        <div t-if="!state.selected.length" class="text-muted p-2">Select seats on the map.</div>
+                        <t t-foreach="state.selected" t-as="sel" t-key="sel.seat_id">
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <span class="fw-bold cinema-seat-tag"><t t-esc="sel.label"/></span>
+                                <select class="form-select form-select-sm flex-grow-1"
+                                        t-on-change="(ev) => this.setTicketType(sel, ev.target.value)">
+                                    <t t-foreach="state.data.ticket_types" t-as="tt" t-key="tt.id">
+                                        <option t-att-value="tt.id" t-att-selected="tt.id === sel.ticket_type_id">
+                                            <t t-esc="tt.name"/>
+                                        </option>
+                                    </t>
+                                </select>
+                                <span class="text-nowrap"><t t-esc="formatPrice(priceOf(sel))"/></span>
+                            </div>
+                        </t>
+                    </div>
+                    <div class="p-3 border-top">
+                        <div class="d-flex justify-content-between fs-4 fw-bold mb-3">
+                            <span>Total</span>
+                            <span><t t-esc="formatPrice(total)"/></span>
+                        </div>
+                        <button class="btn btn-primary btn-lg w-100"
+                                t-att-disabled="!state.selected.length or state.busy"
+                                t-on-click="addToOrder">
+                            <i t-if="state.busy" class="fa fa-circle-o-notch fa-spin me-2"/>
+                            Add to order
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

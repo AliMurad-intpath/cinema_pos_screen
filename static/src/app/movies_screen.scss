@@ -1,0 +1,70 @@
+.cinema-screen {
+    .cinema-movies { width: 30%; min-width: 250px; }
+    .cinema-summary { width: 28%; min-width: 260px; }
+
+    .cinema-movie-card {
+        cursor: pointer;
+        background: var(--bs-body-bg, #fff);
+        &.cinema-active { border-color: var(--bs-primary, #714b67) !important; box-shadow: 0 0 0 2px var(--bs-primary, #714b67); }
+    }
+    .cinema-poster { width: 64px; height: 96px; object-fit: cover; flex: none; }
+
+    .cinema-showtime {
+        min-width: 130px;
+        text-align: center;
+        border: 2px solid transparent;
+        &.availability-available { background: #e8f5e9; color: #1b5e20; }
+        &.availability-almost_full { background: #fff8e1; color: #8a5a00; }
+        &.availability-sold_out { background: #eceff1; color: #90a4ae; }
+        &.cinema-active { border-color: var(--bs-primary, #714b67); }
+    }
+
+    .cinema-screen-bar {
+        text-align: center;
+        letter-spacing: 6px;
+        font-size: 12px;
+        padding: 4px 0;
+        margin: 0 auto;
+        max-width: 80%;
+        background: #cfd8dc;
+        color: #37474f;
+        border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+    }
+
+    .cinema-seatmap { overflow-x: auto; white-space: nowrap; text-align: center; }
+    .cinema-seat-row { display: block; white-space: nowrap; }
+    .cinema-row-label { display: inline-block; width: 28px; font-size: 12px; color: #78909c; }
+
+    .cinema-seat {
+        display: inline-block;
+        width: 38px;
+        height: 38px;
+        margin: 3px;
+        padding: 0;
+        border: 2px solid transparent;
+        border-radius: 8px;
+        font-size: 12px;
+        color: #fff;
+        &.seat-gap { margin-left: 26px; }
+        &.seat-free { background: #2e7d32; cursor: pointer; }
+        &.seat-held { background: #f9a825; cursor: not-allowed; }
+        &.seat-sold { background: #c62828; cursor: not-allowed; opacity: .6; }
+        &.type-vip { border-color: #ffd54f; }
+        &.type-couple { border-radius: 14px; }
+        &.seat-selected { background: #1565c0; transform: scale(1.08); }
+    }
+
+    .cinema-dot {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 3px;
+        margin-right: 4px;
+        &.seat-free { background: #2e7d32; }
+        &.seat-held { background: #f9a825; }
+        &.seat-sold { background: #c62828; }
+        &.seat-selected { background: #1565c0; }
+    }
+
+    .cinema-seat-tag { min-width: 42px; }
+}

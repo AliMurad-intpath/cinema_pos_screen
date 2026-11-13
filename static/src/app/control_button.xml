@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <!-- Appended at the root of the template on purpose: it does not depend on
+         the exact markup of the standard control buttons, which changes between 19.x releases.
+         Move it with a more specific xpath if you want it inside the button grid. -->
+    <t t-name="cinema_pos_screen.ControlButtons" t-inherit="point_of_sale.ControlButtons" t-inherit-mode="extension">
+        <xpath expr="." position="inside">
+            <button class="btn btn-primary btn-lg w-100 mt-2 cinema-movies-button" t-on-click="onCinemaMoviesClick">
+                <i class="fa fa-film me-2"/>Movies
+            </button>
+        </xpath>
+    </t>
+</templates>

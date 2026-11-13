@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- One service product carries every ticket line; the seat, showtime and
+         ticket type live on the cinema booking, not on the product. -->
+    <record id="product_cinema_ticket" model="product.template">
+        <field name="name">Cinema Ticket</field>
+        <field name="type">service</field>
+        <field name="list_price">0.0</field>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="False"/>
+        <field name="available_in_pos" eval="True"/>
+        <field name="is_cinema_ticket" eval="True"/>
+    </record>
+</odoo>

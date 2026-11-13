@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="param_pos_hold_minutes" model="ir.config_parameter">
+        <field name="key">cinema.pos_hold_minutes</field>
+        <field name="value">15</field>
+    </record>
+</odoo>

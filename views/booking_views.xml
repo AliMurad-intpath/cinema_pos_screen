@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_cinema_booking_form_pos" model="ir.ui.view">
+        <field name="name">cinema.booking.form.pos</field>
+        <field name="model">cinema.booking</field>
+        <field name="inherit_id" ref="cinema_booking.view_cinema_booking_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='payment_reference']" position="after">
+                <field name="pos_order_id" invisible="not pos_order_id"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
